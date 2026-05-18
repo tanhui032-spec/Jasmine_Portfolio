@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jasmine Tan Siang Hwee | Professional Portfolio</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        :root { --cbre-blue: #003F72; --tech-blue: #007BFF; --gray: #F8F9FA; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; overflow-x: hidden; scroll-behavior: smooth; }
+        section { height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid #eee; overflow: hidden; }
+        .intern-header { position: absolute; top: 0; left: 0; width: 100%; background: var(--cbre-blue); color: white; padding: 12px 40px; font-size: 1rem; font-weight: 600; letter-spacing: 2px; z-index: 1000; }
+        
+        /* Page 1 Animations */
+        #page1 { background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%); }
+        .p1-container { max-width: 1500px; width: 100%; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center; padding: 0 80px; }
+        #page1 h2 { font-size: 5.5rem; color: var(--cbre-blue); line-height: 1.1; margin-bottom: 30px; opacity: 0; animation: slideUp 1s ease-out forwards; }
+        #page1 ul li { font-size: 1.35rem; margin-bottom: 20px; color: #555; list-style: none; opacity: 0; animation: slideIn 0.8s ease-out forwards; }
+        .profile-frame { width: 550px; height: 550px; border-radius: 24px; border: 12px solid white; box-shadow: 0 30px 60px rgba(0,0,0,0.15); overflow: hidden; opacity: 0; animation: zoomIn 1.2s forwards; }
+        .profile-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        /* Page 2 Grid */
+        .grid-container { max-width: 1400px; width: 100%; display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 40px; align-items: center; padding: 100px 60px 40px; }
+        .grid-4box { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; height: 580px; }
+        .grid-item { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid #ddd; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; }
+        .dynamic-label { position: absolute; top: 0; left: 0; width: 100%; background: rgba(0, 63, 114, 0.9); color: #fff; padding: 10px 15px; font-size: 0.9rem; z-index: 20; font-weight: 600; pointer-events: none; transition: opacity 0.3s; }
+        .footer-tag { position: absolute; bottom: 0; left: 0; width: 100%; background: var(--cbre-blue); color: white; padding: 5px; font-size: 0.75rem; text-align: center; font-weight: 600; z-index: 10; }
+        .swiper-mini { width: 100%; height: 100%; }
+        .swiper-mini img { width: 100%; height: 100%; object-fit: cover; opacity: 1; display: block; }
+
+        /* Page 3 Styles */
+        .map-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .glass-card { position: absolute; z-index: 10; background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); padding: 40px; left: 80px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.5); max-width: 500px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        /* Page 4 Styles */
+        .draggable-window { position: absolute; z-index: 2000; width: 550px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); bottom: 50px; right: 50px; padding-bottom: 20px; }
+        .window-top { background: var(--cbre-blue); color: white; padding: 14px 22px; cursor: move; display: flex; justify-content: space-between; border-radius: 20px 20px 0 0; }
+        .tech-swiper { width: 90%; height: 320px; margin: 15px auto; border-radius: 12px; overflow: hidden; background: #eee; }
+        .tech-swiper img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* Lightbox */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
+        #lightbox img { max-width: 90%; max-height: 90%; border: 5px solid white; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+<section id="page1">
+    <div class="p1-container">
+        <div class="info">
+            <h2 style="animation-delay: 0.2s;">Jasmine Tan<br>Siang Hwee</h2>
+            <ul>
+                <li style="animation-delay: 0.4s;">🏫 <b>Institution:</b> Universiti Tun Hussein Onn Malaysia (UTHM)</li>
+                <li style="animation-delay: 0.6s;">📜 <b>Degree:</b> Bachelor of Real Estate Management with Honours</li>
+                <li style="animation-delay: 0.8s;">🏆 <b>CGPA:</b> 3.52 / 4.00</li>
+                <li style="animation-delay: 1.0s;">💼 <b>Internship:</b> CBRE | WTW Malacca</li>
+                <li style="animation-delay: 1.2s;">📝 <b>Final Year Project:</b> A Comparative Study of Comfort Levels Between On-Campus and Off-Campus Accommodation Among UTHM Students
+</li>
+            </ul>
+        </div>
+        <div class="profile-frame">
+            <img src="https://i.postimg.cc/FFDs927Y/profile-jpg.jpg">
+        </div>
+    </div>
+</section>
+
+<section id="page2">
+    <div class="intern-header">CBRE Internship Experience</div>
+    <div class="grid-container">
+        <div class="info">
+            <h2 style="font-size: 2.8rem; margin-bottom: 20px; color: var(--cbre-blue);">Valuation Scope</h2>
+            <ul style="list-style: none; font-size: 1.05rem; line-height: 1.6;">
+                <li>🏘️ <b>Property Types:</b> Residential, Commercial, Industrial, Special Property.</li>
+                <li>📈 <b>Quantity:</b> Involved in 15+ professional valuation reports.</li>
+                <li>📊 <b>Methods:</b> Comparison, Investment, Cost Approach.</li>
+                <li>💡 <b>Skills:</b> Site Inspection, Floor Plan, Report Templates.</li>
+            </ul>
+        </div>
+        <div class="grid-4box">
+            <div class="grid-item" onclick="openFull(this)">
+                <div class="dynamic-label" id="label-box1">Inspection: Semi-D @ Taman Bertam Height</div>
+                <div class="swiper miniSwiper1 swiper-mini">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/ThS2Cs1Q/SEMI-D.jpg"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/14450SmG/HIGH-RISE.jpg"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/0r35c4rg/SHOPLOT.jpg"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/Lhh6kS9N/PETROL-STATION.jpg"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/KkpcXqNz/HINDU-TEMPLE.jpg"></div>
+                    </div>
+                </div>
+                <div class="footer-tag">FIELD INSPECTION</div>
+            </div>
+            <div class="grid-item" onclick="openFull(this)">
+                <div class="dynamic-label" id="label-box2">Comparison: Adjustment Spreadsheet</div>
+                <div class="swiper miniSwiper2 swiper-mini">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/WDKYQ0Z3/com-3.png"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/mzHpRh3Z/comp-1.png"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/TLDNGhjY/comp-2.png"></div>
+                    </div>
+                </div>
+                <div class="footer-tag">CALCULATION LOGIC</div>
+            </div>
+            <div class="grid-item" onclick="openFull(this)">
+                <div class="dynamic-label" id="label-box3">Floor Plan: AutoCAD Detailed Design</div>
+                <div class="swiper miniSwiper3 swiper-mini">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/mzMp6yCL/184337656-project-5-first-floor-first-design-20260410-2c4834-(1).jpg"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/sG463fny/Gemini-Generated-Image-13io1i13io1i13io.png"></div>
+                    </div>
+                </div>
+                <div class="footer-tag">TECHNICAL DRAWING</div>
+            </div>
+            <div class="grid-item" onclick="openFull(this)">
+                <div class="dynamic-label" id="label-box4">Investment: Calculation Procedure (A)</div>
+                <div class="swiper miniSwiper4 swiper-mini">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/njwg6hPV/invest-1.png"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/bSDW8f7Y/invest-2.png"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/7JGdDrFh/invest-3.png"></div>
+                        <div class="swiper-slide"><img src="https://i.postimg.cc/K3kwFh6z/invest-4.png"></div>
+                    </div>
+                </div>
+                <div class="footer-tag">INVESTMENT METHOD</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="page3">
+    <div class="intern-header">CBRE Internship Experience</div>
+    <div id="map-bg" class="map-bg"></div>
+    <div class="glass-card">
+        <h2 style="font-size: 2.5rem; color: var(--cbre-blue); margin-bottom: 15px;">Market Study</h2>
+        <p style="font-size: 1.1rem; line-height: 1.6; color: #333;">
+            📉 <b>Supply/Demand Analysis:</b> Population Estimation and Analysis units of Residential, Commercial,and Industrial..<br>
+            👥 <b>Demographic Research:</b>  Taman Impiana Kesang, Taman Bertam Putra & Kota Heritage.<br>
+            📍 <b>Spatial Catchment:</b> Interactive radius mapping (5km - 10km zones).
+        </p>
+    </div>
+</section>
+
+<section id="page4">
+    <div class="intern-header">CBRE Internship Experience</div>
+    <iframe src="heatmap.html" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"></iframe>
+    <div class="draggable-window" id="tech-window">
+        <div class="window-top" id="drag-handle"><span><i class="fa-solid fa-terminal"></i> DATA INTELLIGENCE</span></div>
+        <div class="swiper tech-swiper mySwiperTech">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="https://i.postimg.cc/VdLn2hgr/code-1.png"></div>
+                <div class="swiper-slide"><img src="https://i.postimg.cc/3dJmzq1G/code-4.png"></div>
+            </div>
+        </div>
+        <p style="text-align:center; padding: 0 20px; font-size: 0.9rem; color: #333;">Python automation for NAPIC raw data cleaning & QGIS Heatmap spatial visualization.</p>
+    </div>
+</section>
+
+<div id="lightbox" onclick="this.style.display='none'"><img id="fullImg"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    const labels = {
+        box1: ["Inspection: Semi-D @ Taman Bertam Height", "Unit: Ambience Harmoni @ Pulau Gadong", "Property: Commercial Shoplot", "Special: Petrol Station Inspection", "Special: Indian Temple Site"],
+        box2: ["Comparison: Adjustment Spreadsheet", "Comparison: Market Evidence Data", "Comparison: Final Summary Analysis"],
+        box3: ["Floor Plan: AutoCAD Detailed Design", "Floor Plan: 3D Visualization Rendering"],
+        box4: ["Investment: Calculation Procedure (A)", "Investment: Calculation Procedure (B)", "Term & Reversion Case: Commercial A", "Term & Reversion Case: Commercial B"]
+    };
+
+    function initSwiper(selector, labelId, labelArray) {
+        return new Swiper(selector, {
+            loop: true, autoplay: { delay: 3000 }, speed: 800,
+            on: {
+                slideChange: function () {
+                    const labelElement = document.getElementById(labelId);
+                    if (labelElement && labelArray[this.realIndex]) {
+                        labelElement.style.opacity = 0;
+                        setTimeout(() => { labelElement.innerText = labelArray[this.realIndex]; labelElement.style.opacity = 1; }, 300);
+                    }
+                }
+            }
+        });
+    }
+
+    initSwiper(".miniSwiper1", "label-box1", labels.box1);
+    initSwiper(".miniSwiper2", "label-box2", labels.box2);
+    initSwiper(".miniSwiper3", "label-box3", labels.box3);
+    initSwiper(".miniSwiper4", "label-box4", labels.box4);
+    new Swiper(".mySwiperTech", { loop: true, autoplay: { delay: 4000 } });
+
+    function openFull(element) {
+        const activeImg = element.querySelector('.swiper-slide-active img') || element.querySelector('img');
+        const lightbox = document.getElementById('lightbox');
+        const fullImg = document.getElementById('fullImg');
+        fullImg.src = activeImg.src;
+        lightbox.style.display = 'flex';
+    }
+
+    // Page 3 - 恢复三个圆圈
+    var map = L.map('map-bg', {zoomControl: false, scrollWheelZoom: false}).setView([2.26, 102.26], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+    const zones = [
+        { name: "Taman Impiana Kesang", coords: [2.3239, 102.3666], radius: 10000, color: 'red' },
+        { name: "Kota Heritage", coords: [2.1968, 102.2340], radius: 5000, color: 'blue' },
+        { name: "Taman Bertam Putra", coords: [2.2922, 102.1663], radius: 5000, color: 'green' }
+    ];
+
+    zones.forEach(z => {
+        L.circle(z.coords, {radius: z.radius, color: z.color, fillOpacity: 0.1, weight: 1}).addTo(map);
+        L.marker(z.coords).addTo(map).bindTooltip(z.name, {permanent: true, direction: 'top'});
+    });
+
+    // Page 4 - 拖拽
+    const dragEl = document.getElementById("tech-window");
+    const handle = document.getElementById("drag-handle");
+    handle.onmousedown = (e) => {
+        let p3 = e.clientX, p4 = e.clientY;
+        document.onmousemove = (ev) => {
+            dragEl.style.left = (dragEl.offsetLeft - (p3 - ev.clientX)) + "px";
+            dragEl.style.top = (dragEl.offsetTop - (p4 - ev.clientY)) + "px";
+            p3 = ev.clientX; p4 = ev.clientY;
+            dragEl.style.bottom = 'auto'; dragEl.style.right = 'auto';
+        };
+        document.onmouseup = () => document.onmousemove = null;
+    };
+</script>
+</body>
+</html>
